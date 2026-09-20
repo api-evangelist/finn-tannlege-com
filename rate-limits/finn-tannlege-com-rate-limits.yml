@@ -1,0 +1,45 @@
+generated: '2026-09-19'
+method: probed
+source: >-
+  Response headers observed on https://finn-tannlege.com/api/tannlege/agents, /api/tannlege/chains,
+  /api/tannlege/discover, POST /a2a (message/send) and POST /mcp on 2026-09-19, cross-checked against the
+  limit stated in https://finn-tannlege.com/llms.txt.
+docs: https://finn-tannlege.com/llms.txt
+limit_count: 1
+description: >-
+  One flat per-IP quota covers every machine surface - REST, A2A and MCP share a counter. The API signals
+  it with the IETF RateLimit header family on every response, so an agent can read its remaining budget at
+  runtime. llms.txt states the same number ("1000/15 min") and says the optional X-API-Key does NOT raise
+  it on this vertical, unlike some sister verticals on the platform.
+limits:
+- scope: per-ip
+  window: 900 seconds (15 minutes)
+  limit: 1000
+  burst: null
+  applies_to: [https://finn-tannlege.com/api/tannlege/*, https://finn-tannlege.com/a2a, https://finn-tannlege.com/mcp]
+  raised_by_api_key: false
+  source: 'RateLimit-Policy: 1000;w=900 header; llms.txt "flat IP-kvote (1000/15 min)"'
+response_headers:
+  observed:
+  - {name: RateLimit-Policy, example: '1000;w=900'}
+  - {name: RateLimit-Limit, example: '1000'}
+  - {name: RateLimit-Remaining, example: '977'}
+  - {name: RateLimit-Reset, example: '590', unit: seconds until the window resets}
+  checked_for: [RateLimit-Policy, RateLimit-Limit, RateLimit-Remaining, RateLimit-Reset, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, Retry-After]
+  note: >-
+    The four RateLimit-* headers follow draft-ietf-httpapi-ratelimit-headers (policy string "limit;w=window");
+    no legacy X-RateLimit-* headers. Remaining decremented by one per request across REST, A2A and MCP calls
+    from the same address, confirming a single shared counter. Retry-After was not observed because the quota
+    was not exhausted during the probe.
+exhaustion_status: null
+exhaustion_note: The quota was not exhausted deliberately; the status code and body on exhaustion are undocumented and were not observed.
+enforcement:
+  documented: true
+  where: https://finn-tannlege.com/llms.txt
+  inferred: Express rate-limit middleware on the Fly.io origin (server header Fly), keyed on client IP.
+x-evidence:
+  fetched: '2026-09-19'
+  probes:
+  - {url: 'https://finn-tannlege.com/api/tannlege/agents?limit=1', method: GET, status: 200, rate_limit_headers: 'RateLimit-Policy 1000;w=900; RateLimit-Limit 1000; RateLimit-Remaining 977; RateLimit-Reset 590'}
+  - {url: 'https://finn-tannlege.com/a2a', method: POST message/send, status: 200, rate_limit_headers: 'RateLimit-Remaining 976 (same counter, one request later)'}
+  - {url: 'https://finn-tannlege.com/mcp', method: POST tools/list (no session), status: 404, rate_limit_headers: 'RateLimit-Policy 1000;w=900; RateLimit-Remaining 997'}

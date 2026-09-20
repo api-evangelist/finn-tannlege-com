@@ -1,0 +1,21 @@
+generated: '2026-09-19'
+method: generated
+source: >-
+  Packaged Agent Skills generated from openapi/finn-tannlege-com-openapi.yml (fetched from
+  https://finn-tannlege.com/openapi.json on 2026-09-19). Every step is grounded in an operationId present
+  verbatim in that spec; cross-cutting rules cite ../conventions/, ../errors/, ../rate-limits/, ../a2a/
+  and ../mcp/. The provider publishes no skills of its own (/.well-known/agent-skills/index.json 404; no
+  AGENTS.md in the mcp-server-dental source folder).
+skills:
+- file: finn-tannlege-com-find-a-clinic.md
+  name: Find a dental clinic and read its profile
+  api: openapi/finn-tannlege-com-openapi.yml
+  operations: [listDentalAgents, discoverDentalAgents, getDentalAgent, getDentalSpecialists]
+- file: finn-tannlege-com-find-emergency-duty-clinic.md
+  name: Find an emergency-duty (akuttvakt) clinic in a county
+  api: openapi/finn-tannlege-com-openapi.yml
+  operations: [listDentalAgents, getDentalAgent]
+- file: finn-tannlege-com-query-through-the-agent-surfaces.md
+  name: Query the directory through A2A or MCP instead of REST
+  api: openapi/finn-tannlege-com-openapi.yml
+  operations: [getDentalAgentCardWellKnown, dentalA2AJsonRpc, dentalMcpStreamableHttp, getLlmsTxt]

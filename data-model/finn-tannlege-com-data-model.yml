@@ -1,0 +1,57 @@
+generated: '2026-09-19'
+method: derived
+source:
+- openapi/finn-tannlege-com-openapi.yml
+- https://finn-tannlege.com/api/tannlege/agents?limit=1 (live response 2026-09-19)
+- https://finn-tannlege.com/llms.txt
+description: >-
+  Entity graph of the clinic directory as the contract and live responses expose it. The OpenAPI declares
+  one schema, DentalClinic; the live listDentalAgents response carries more fields than the schema
+  (postnummer, mobil, epost, antall_ansatte, organisasjonsform, registreringsdato, naeringskode,
+  catalog_class, treatments, languages_spoken, price_band, chain_parent_orgnr, updated_at), which are
+  recorded as observed, not declared. Specialists and chains have no schema in the spec; their shape is
+  known only from the operations that return them.
+entities:
+- name: DentalClinic
+  schema: DentalClinic
+  declared: true
+  primary_key: id (UUID)
+  natural_key: org_nr (9-digit Norwegian organisation number, Brreg)
+  declared_fields: [id, org_nr, navn, poststed, fylke, adresse, telefon, hjemmeside, helfo_agreement, acute_vakt, available_specialties, chain_brand, is_chain_member, verification_status, enrichment_state, lat, lng]
+  observed_fields: [postnummer, mobil, epost, antall_ansatte, organisasjonsform, registreringsdato, naeringskode, catalog_class, directory_url, updated_at, treatments, languages_spoken, price_band, chain_parent_orgnr]
+  enums:
+    helfo_agreement: ['true', 'false', unknown]
+    enrichment_state: [raw, enriched]
+    verification_status: [needs_review, pending_verify, verified (observed values; not enumerated in the spec)]
+  operations: [listDentalAgents, getDentalAgent, discoverDentalAgents]
+  public_page: https://finn-tannlege.com/klinikk/{name-slug}-{org_nr}
+- name: Specialist
+  declared: false
+  note: Returned by getDentalSpecialists (GET /api/tannlege/agents/{id}/specialists); HPR-sourced authorised specialists at a clinic. No schema in the spec.
+  operations: [getDentalSpecialists]
+- name: DentalChain
+  declared: false
+  note: Returned by listDentalChains as {count, chains[]}; the table was empty (count 0) when probed on 2026-09-19, so the item shape is unobserved. llms.txt describes the MCP tannlege_kjeder tool as returning chains with a clinic-location count.
+  operations: [listDentalChains]
+- name: County (fylke)
+  declared: false
+  note: A value, not an entity - the 15 Norwegian counties the site pages list (/fylke/{name}); used as a filter and as the axis of the per-county statistics.
+relationships:
+- from: DentalClinic
+  to: Specialist
+  type: has_many
+  via: GET /api/tannlege/agents/{id}/specialists (getDentalSpecialists)
+- from: DentalClinic
+  to: DentalChain
+  type: belongs_to
+  via: chain_brand (declared), is_chain_member (declared), chain_parent_orgnr (observed)
+  optional: true
+- from: DentalClinic
+  to: County
+  type: belongs_to
+  via: fylke
+identifier_domains:
+  id: UUID v4
+  org_nr: 9 digits, Brønnøysund Register Centre organisation number
+  specialty_slugs: [kjeveortopedi, oral-kirurgi-og-oral-medisin, periodonti, endodonti, pedodonti, oral-protetikk, kjeve-og-ansiktsradiologi]
+render: null

@@ -1,0 +1,90 @@
+generated: '2026-09-19'
+method: derived
+source: >-
+  Live tools/list from https://finn-tannlege.com/mcp (five tools with inputSchema, 2026-09-19) aligned
+  by hand with the operationIds in openapi/finn-tannlege-com-openapi.yml (fetched the same day from
+  https://finn-tannlege.com/openapi.json) and the parameter names documented in
+  https://finn-tannlege.com/llms.txt.
+description: >-
+  Binds each MCP tool to the REST operation that backs it, so a tool inherits that operation's real
+  parameters as its input contract. The MCP server is a thin proxy over /api/tannlege (its npm source
+  sets FINN_TANNLEGE_URL and calls the same routes), so most bindings are exact. Tool parameter names are
+  Norwegian-flavoured (spesialitet, akutt, query) while the REST query parameters are specialty,
+  acute_vakt and q; the mapping is recorded per row.
+surfaces:
+  openapi: openapi/finn-tannlege-com-openapi.yml
+  mcp:
+    url: https://finn-tannlege.com/mcp
+    gated: false
+    tools_list: live (5 tools, inputSchema present)
+  a2a:
+    url: https://finn-tannlege.com/a2a
+    note: message/send dispatches to tannlege_search, tannlege_info and tannlege_stats - the same three names as the first three tools.
+  graphql: none
+crosswalk:
+- tool: tannlege_search
+  category: clinic-search
+  rest: [listDentalAgents]
+  binding: rest
+  confidence: high
+  parameter_map: {query: q, fylke: fylke, spesialitet: specialty, helfo: 'helfo ("true")', akutt: 'acute_vakt (1)', limit: limit}
+  note: >-
+    discoverDentalAgents accepts the same filters and returns a slimmer result; the tool's full-profile
+    output matches listDentalAgents. No offset parameter is exposed on the tool.
+- tool: tannlege_info
+  category: clinic-detail
+  rest: [getDentalAgent]
+  binding: rest
+  confidence: medium
+  parameter_map: {id: 'id (path, UUID)', org_nr: no REST parameter}
+  note: >-
+    getDentalAgent takes the clinic UUID in the path. The tool also accepts a 9-digit org_nr, which no
+    operation in the spec takes as a parameter - the server resolves it internally (the DentalClinic
+    schema carries org_nr as a field). Specialist detail for the same clinic is a separate REST call,
+    getDentalSpecialists, that the tool does not surface.
+- tool: tannlege_akutt
+  category: clinic-search
+  rest: [listDentalAgents]
+  binding: rest
+  confidence: high
+  parameter_map: {fylke: fylke, '(fixed)': 'acute_vakt=1'}
+  note: A pre-filtered listDentalAgents call; the tool fixes acute_vakt=1 and passes the county through.
+- tool: tannlege_kjeder
+  category: chains
+  rest: [listDentalChains]
+  binding: rest
+  confidence: high
+  note: 'listDentalChains returned {"count":0,"chains":[]} on 2026-09-19; the operation and tool exist but the chain table was empty when probed.'
+mcp_only:
+- tool: tannlege_stats
+  reason: >-
+    No operation in the OpenAPI returns aggregated statistics; GET /api/tannlege/stats and
+    /api/tannlege/statistikk both 404 (probed 2026-09-19). The server computes the aggregate itself. The
+    A2A card exposes the same capability as the tannlege_stats skill.
+rest_only:
+- operationId: getDentalSpecialists
+  capability: clinic-detail
+  note: Registered specialists at a clinic (HPR-sourced); reachable only over REST.
+- operationId: discoverDentalAgents
+  capability: clinic-search
+  note: Slim A2A-friendly discovery shape ({vertical, query, count, results[]}); tannlege_search binds to the full listDentalAgents instead.
+- operationId: getDentalA2ACard
+  capability: agent-surface
+- operationId: dentalA2AJsonRpc
+  capability: agent-surface
+- operationId: getDentalAgentCardWellKnown
+  capability: agent-surface
+- operationId: getLlmsTxt
+  capability: agent-surface
+- operationId: dentalMcpStreamableHttp
+  capability: agent-surface
+  note: The MCP endpoint itself, documented as an operation in the spec.
+- operationId: dentalMcpSse
+  capability: agent-surface
+coverage:
+  tools_named: 5
+  tools_bound: 4
+  mcp_only: 1
+  rest_operations_total: 11
+  rest_operations_with_tool: 3
+  rest_operations_agent_surface: 6

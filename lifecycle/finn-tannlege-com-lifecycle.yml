@@ -1,0 +1,49 @@
+generated: '2026-09-19'
+method: searched
+source:
+- https://finn-tannlege.com/openapi.json
+- https://finn-tannlege.com/.well-known/agent-card.json
+- https://finn-tannlege.com/.well-known/mcp/server-card.json
+- https://finn-tannlege.com/om
+- https://finn-tannlege.com/kontakt
+- https://registry.npmjs.org/finn-tannlege-mcp
+versioning:
+  scheme: none published; a single 0.1.0 label across every surface
+  api_version: 0.1.0
+  agent_card_version: 0.1.0
+  mcp_server_version: 0.1.0
+  npm_package_version: 0.1.0
+  protocol_versions: {a2a: 1.0.0, mcp_negotiated: '2025-06-18', openapi: 3.1.0}
+  detail: >-
+    The REST paths carry no version segment (/api/tannlege/...), and the OpenAPI, the agent card, the MCP
+    server card, the live MCP serverInfo and the npm package all report 0.1.0. No versioning policy,
+    changelog or release notes are published anywhere on the site or in the mcp-server-dental folder of
+    the source repository; the npm package has one release (2026-06-04).
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: false
+  detail: No deprecation policy and no RFC 8594 Sunset or Deprecation headers were observed on any response.
+deprecated_operations: []
+sla:
+  url: null
+  public_uptime_target: null
+  notes: No SLA and no status page (/status 404). Hosted on Fly.io (server header).
+status_page: null
+changelog: null
+support:
+  contact: https://finn-tannlege.com/kontakt
+  email: kontakt@finn-tannlege.com
+  stated_response_times:
+  - {commitment: 'Vi svarer innen én virkedag', translation: reply within one business day, scope: contact form, source: 'https://finn-tannlege.com/kontakt'}
+  - {commitment: 'Vi svarer innen 5 virkedager', translation: reply within five business days, scope: clinic profile update or removal requests, source: 'https://finn-tannlege.com/om'}
+data_currency:
+  stated: >-
+    Every profile field is stored with its source and the date it was last confirmed; "Verified" is an
+    editorially set status. Clinics marked permanently closed or invalid are excluded from public search.
+  source: https://finn-tannlege.com/proveniens
+  observed_record_timestamp: 'updated_at "2026-07-21 11:39:18" on the first clinic returned 2026-09-19'
+data_license:
+  brreg: CC0 (stated in the OpenAPI info.license and llms.txt)
+  hpr: public register data
+  clinic_websites: reproduced as factual summary with source attribution

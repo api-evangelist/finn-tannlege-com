@@ -1,0 +1,62 @@
+generated: '2026-09-19'
+method: searched
+source:
+- https://finn-tannlege.com/llms.txt
+- https://finn-tannlege.com/.well-known/agent-card.json
+- https://finn-tannlege.com/.well-known/mcp/server-card.json
+- https://finn-tannlege.com/openapi.json
+docs: https://finn-tannlege.com/llms.txt
+description: >-
+  Authentication profile for every finn-tannlege.com surface. The OpenAPI declares no securitySchemes and
+  its info.description states "All read endpoints are public; no authentication required"
+  (derive-authentication.py therefore produced nothing, and this file is written from the provider's
+  documents instead). The agent card and the MCP server card both declare schemes ["none"]. The one
+  credential that exists is an optional, free consumer identity key documented in llms.txt; it grants no
+  access and raises no limit. Confirmed live on 2026-09-19: anonymous calls to REST, A2A message/send and
+  the MCP handshake all succeeded.
+summary:
+  types: [none, apiKey]
+  required: false
+schemes:
+- name: anonymous
+  type: none
+  surface: REST https://finn-tannlege.com/api/tannlege, A2A https://finn-tannlege.com/a2a, MCP https://finn-tannlege.com/mcp
+  description: >-
+    Every published operation is callable without credentials. The only per-client control is a flat
+    per-IP rate limit (rate-limits/finn-tannlege-com-rate-limits.yml).
+  sources: [https://finn-tannlege.com/openapi.json, https://finn-tannlege.com/.well-known/agent-card.json, https://finn-tannlege.com/.well-known/mcp/server-card.json]
+  probes:
+  - {url: 'https://finn-tannlege.com/api/tannlege/agents?limit=1', method: GET, status: 200, credentials: none}
+  - {url: 'https://finn-tannlege.com/a2a', method: POST message/send, status: 200, credentials: none}
+  - {url: 'https://finn-tannlege.com/mcp', method: POST initialize + tools/list, status: 200, credentials: none}
+- name: consumerApiKey
+  type: apiKey
+  in: header
+  header: X-API-Key
+  required: false
+  surface: any REST, A2A or MCP call
+  description: >-
+    "Frivillig og helt gratis identitetsnøkkel for AI-agenter" - a voluntary, free identity key. Minted
+    by POST https://finn-tannlege.com/api/keys with an optional JSON body {label, contact_email}; no
+    login or account; the key is returned once and cannot be retrieved again. Sending it as X-API-Key
+    records the call in an aggregated usage ledger (endpoint or tool name and date only - never content or
+    arguments). On this vertical the rate limit is a flat per-IP quota that the key does NOT raise; the
+    provider notes that the higher keyed limit available on some sister verticals is not connected here.
+    The agent card's securitySchemes declares this scheme as consumerApiKey and adds that the same header
+    name denotes a separate producer/write key elsewhere on the platform, but finn-tannlege.com has no
+    write API so here it means only the consumer key. No security requirement in the card or the OpenAPI
+    references it.
+  obtain: {method: POST, url: 'https://finn-tannlege.com/api/keys', body: '{"label": "my-agent", "contact_email": "..."} (both optional)'}
+  revoke: {method: POST, url: 'https://finn-tannlege.com/api/keys/revoke', body: '{"key": "..."} or the key as X-API-Key', effect: stops the key; history retained}
+  erase: {method: POST, url: 'https://finn-tannlege.com/api/keys/erase', body: '{"key": "..."} or the key as X-API-Key', effect: GDPR erasure of label and e-mail}
+  sources: [https://finn-tannlege.com/llms.txt, https://finn-tannlege.com/.well-known/agent-card.json]
+  probe_note: >-
+    Not exercised - minting a key creates a record on the provider's side, and an OPTIONS on /api/keys
+    (204) was the only request made. GET /api/keys returns the site's 404, consistent with a POST-only route.
+oauth: false
+openid_connect: false
+api_keys: true
+api_keys_required: false
+notes: >-
+  No OAuth 2.0 or OIDC: /.well-known/oauth-authorization-server, /.well-known/oauth-protected-resource
+  (apex and under /mcp/) and /.well-known/openid-configuration all 404 (well-known/finn-tannlege-com-well-known.yml).

@@ -1,0 +1,35 @@
+generated: '2026-09-19'
+method: searched
+source: https://registry.npmjs.org/finn-tannlege-mcp
+sources:
+- https://registry.npmjs.org/finn-tannlege-mcp
+- https://github.com/slookisen/lokal/tree/main/mcp-server-dental
+- https://finn-tannlege.com/llms.txt
+description: >-
+  First-party distributed software. Finn-tannlege ships no client library for its REST API (it is a
+  key-free JSON API; the OpenAPI is the integration surface) - the one published package is the stdio MCP
+  server, so a Packages pointer is emitted but no SDKs pointer. The package's homepage is
+  finn-tannlege.com, its repository is the same slookisen/lokal repository the provider's MCP server card
+  names, and its author (Daniel Fredriksen) is the operator, so official is true. PyPI
+  (pypi.org/pypi/finn-tannlege/json) returned 404; npm search for "finn-tannlege" returned only this
+  package plus unrelated finn-no packages from FINN.no, a different company.
+packages:
+- language: javascript
+  registry: npm
+  name: finn-tannlege-mcp
+  kind: mcp-server
+  url: https://www.npmjs.com/package/finn-tannlege-mcp
+  source: https://github.com/slookisen/lokal/tree/main/mcp-server-dental
+  install: npx finn-tannlege-mcp
+  official: true
+  version: 0.1.0
+  published: '2026-06-04'
+  license: MIT
+  bin: {finn-tannlege-mcp: index.js}
+  dependencies: {'@modelcontextprotocol/sdk': '^1.12.1', zod: '^3.23.8'}
+  mcp_registry_name: io.github.slookisen/finn-tannlege-mcp
+  environment: {FINN_TANNLEGE_URL: 'https://finn-tannlege.com (override API base URL)'}
+  note: >-
+    Version and date read from registry.npmjs.org (time.created and time["0.1.0"] both 2026-06-04T21:26Z;
+    a single release). The live remote server at https://finn-tannlege.com/mcp reports the same version,
+    0.1.0. The package README's "~6,900 clinics" predates the site's current 5,447 count.

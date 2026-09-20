@@ -1,0 +1,30 @@
+generated: '2026-09-19'
+method: searched
+source: https://finn-tannlege.com/hvordan-det-fungerer
+sources:
+- https://finn-tannlege.com/hvordan-det-fungerer
+- https://finn-tannlege.com/llms.txt
+- https://finn-tannlege.com/om
+note: >-
+  There is no pricing page (/pricing, /priser, /vilkar and /terms all 404) because there is nothing to
+  price: the service is free for patients and for agents. The how-it-works page states "Ingen mellomledd,
+  ingen gebyrer fra vår side" (no intermediaries, no fees from us); llms.txt describes the optional
+  consumer API key as "helt gratis" (completely free) with "ingen innlogging eller konto kreves" (no
+  login or account required); the About page says the directory is independent of any clinic chain,
+  insurer or booking portal. The single entry below records that free, open tier - it is a published
+  fact, not a plan the provider markets. No Pricing pointer is emitted since no pricing page exists.
+plan_count: 1
+currency: null
+plans:
+- name: Open access
+  price: 0
+  currency: null
+  period: none
+  account_required: false
+  included_quota: 'all REST, A2A and MCP read endpoints; 1000 requests per 15 minutes per IP (rate-limits/finn-tannlege-com-rate-limits.yml)'
+  overage: none published
+  limits:
+    rate_limit: 1000 requests / 900 s per IP, not raised by the optional X-API-Key
+    page_size: limit default 50, max 500
+  optional_identity: 'free X-API-Key via POST /api/keys (label and contact_email optional) for a usage ledger; revocable at POST /api/keys/revoke, erasable at POST /api/keys/erase'
+  data_license: Brreg-sourced data CC0; HPR data public; clinic-website data reproduced as factual summary

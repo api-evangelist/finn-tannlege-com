@@ -1,0 +1,126 @@
+generated: '2026-09-19'
+method: probed
+source: >-
+  openapi/finn-tannlege-com-openapi.yml (from https://finn-tannlege.com/openapi.json),
+  https://finn-tannlege.com/llms.txt, https://finn-tannlege.com/.well-known/agent-card.json, and live
+  responses from /api/tannlege/agents, /api/tannlege/discover, /a2a and /mcp on 2026-09-19.
+description: >-
+  How finn-tannlege.com's machine surfaces behave across calls: a key-free, read-only JSON REST API with
+  offset pagination and IETF rate-limit headers, an A2A message/send endpoint that parses natural language
+  into the same filters, and a session-based MCP server proxying the same routes. Norwegian and English are
+  both accepted in free-text queries; field names in responses are Norwegian (navn, poststed, fylke,
+  adresse, telefon, hjemmeside).
+
+base_url: https://finn-tannlege.com/api/tannlege
+api_style: REST over HTTPS, JSON responses, GET only
+surfaces:
+- name: REST
+  url: https://finn-tannlege.com/api/tannlege
+  operations: [listDentalAgents, getDentalAgent, getDentalSpecialists, listDentalChains, discoverDentalAgents]
+  gated: false
+- name: A2A
+  url: https://finn-tannlege.com/a2a
+  methods_implemented: [message/send]
+  methods_refused: [tasks/get and every other method (-32601)]
+  gated: false
+- name: MCP
+  url: https://finn-tannlege.com/mcp
+  transport: streamable-http (session required)
+  tools: [tannlege_search, tannlege_info, tannlege_stats, tannlege_akutt, tannlege_kjeder]
+  gated: false
+
+authentication:
+  scheme: none
+  optional_identity:
+    header: X-API-Key
+    obtain: POST https://finn-tannlege.com/api/keys with optional {label, contact_email}; the key is shown once
+    purpose: usage-ledger attribution only (endpoint/tool name and date - never content); grants no access and does not raise the rate limit on this vertical
+    revoke: POST https://finn-tannlege.com/api/keys/revoke  ({key} in body or X-API-Key header)
+    erase: POST https://finn-tannlege.com/api/keys/erase  (GDPR erasure of label and e-mail; same inputs)
+  detail: authentication/finn-tannlege-com-authentication.yml
+
+idempotency:
+  coverage: na
+  header: null
+  scope: []
+  retention: null
+  note: >-
+    The published contract has no write surface - every REST operation is a GET and the A2A/MCP JSON-RPC
+    posts are queries - so there is nothing for an idempotency key to protect and the dimension is not
+    applicable. The only mutating routes on the host are the optional key-management endpoints documented
+    in llms.txt (POST /api/keys, /api/keys/revoke, /api/keys/erase), which sit outside the OpenAPI and
+    carry no idempotency mechanism: a repeated POST /api/keys mints another key. No Idempotency pointer is
+    emitted.
+
+reversibility:
+  status: na
+  write_surface: none in the published contract (read-only directory)
+  key_management:
+    status: documented
+    surfaces:
+    - {write: 'POST /api/keys (mint a consumer key)', reversal: 'POST /api/keys/revoke', window: not stated, docs: 'https://finn-tannlege.com/llms.txt', note: 'revocation stops the key; the usage history is retained'}
+    - {write: 'POST /api/keys (label / contact_email stored)', reversal: 'POST /api/keys/erase', window: not stated, docs: 'https://finn-tannlege.com/llms.txt', note: 'GDPR erasure of the label and e-mail attached to the key'}
+    note: Reversal paths exist for the one thing an agent can create here; llms.txt states no time window for either, so the grade for this side surface is documented, not verified.
+
+dry_run_mode:
+  status: na
+  note: Read-only API; no dry-run needed or offered.
+
+pagination:
+  style: offset
+  params: {limit: 'default 50, max 500', offset: 'row offset, default 0'}
+  response_fields: {count: number of items in THIS page (not the total)}
+  operations: [listDentalAgents, discoverDentalAgents]
+  note: >-
+    No total, no next link and no cursor; a client pages until a short page. An out-of-range or non-numeric
+    limit falls back to the default silently (limit=abc returned 50 rows with HTTP 200).
+
+response_envelopes:
+- operation: listDentalAgents
+  shape: '{count, agents: [DentalClinic]}'
+- operation: discoverDentalAgents
+  shape: '{vertical: "dental", query: {...echoed filters}, count, results: [{id, navn, org_nr, fylke, poststed, chain_brand, available_specialties, verification_status}]}'
+- operation: listDentalChains
+  shape: '{count, chains: []}'
+- operation: getDentalAgent
+  shape: DentalClinic object (404 {error} when unknown)
+- operation: A2A message/send
+  shape: '{taskId, status: {state, timestamp}, artifacts: [text summary, data {count, clinics[]}], metadata: {skill, filter, parsedFrom}}'
+
+filters:
+  free_text: q (REST) / query (MCP) - matches clinic name or city; Norwegian or English
+  county: fylke - Norwegian county name, e.g. Oslo, Vestland, Trøndelag
+  specialty: specialty (REST) / spesialitet (MCP) - slug such as kjeveortopedi, endodonti, periodonti, pedodonti, oral-protetikk, oral-kirurgi-og-oral-medisin, kjeve-og-ansiktsradiologi
+  helfo: 'helfo="true" (REST string) / helfo boolean (MCP) - Helfo direct-billing agreement only'
+  emergency: 'acute_vakt=1 (REST integer) / akutt boolean (MCP) - emergency-duty clinics only'
+  enrichment_state: raw | enriched (REST only)
+
+identifiers:
+  id: UUID (path id for getDentalAgent and getDentalSpecialists)
+  org_nr: 9-digit Norwegian organisation number (Brreg); present on every clinic, accepted as input only by the MCP tannlege_info tool and the A2A tannlege_info skill
+  profile_url_pattern: https://finn-tannlege.com/klinikk/{name-slug}-{org_nr}
+
+versioning:
+  scheme: none; unversioned paths, every surface labelled 0.1.0
+  detail: lifecycle/finn-tannlege-com-lifecycle.yml
+
+errors:
+  envelope: '{error: "<message>"} on REST; JSON-RPC 2.0 error objects on A2A (HTTP 200) and MCP'
+  format: json (not RFC 9457)
+  detail: errors/finn-tannlege-com-problem-types.yml
+
+rate_limits:
+  signal: RateLimit-Policy, RateLimit-Limit, RateLimit-Remaining, RateLimit-Reset on every response
+  limit: 1000 requests per 900 s per IP, shared across REST, A2A and MCP
+  detail: rate-limits/finn-tannlege-com-rate-limits.yml
+
+request_tracing:
+  header: none provider-defined; responses carry a fly-request-id edge header
+caching:
+  etag: weak ETags on JSON responses; cache-control public max-age=300 on the OpenAPI and agent card
+cors:
+  access_control_allow_origin: '*'
+  exposed_headers: [Mcp-Session-Id, Mcp-Protocol-Version]
+languages:
+  input: Norwegian (bokmål) and English free text
+  output_fields: Norwegian field names; bilingual text artifacts on A2A

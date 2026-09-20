@@ -1,0 +1,46 @@
+generated: '2026-09-19'
+method: probed
+source: live GET of the named /.well-known/ path list on every host this record knows, 2026-09-19
+hit_count: 3
+note: >-
+  finn-tannlege.com serves three real /.well-known/ documents besides its A2A agent card: an MCP server
+  card at /.well-known/mcp/server-card.json (also at /.well-known/mcp.json, byte-identical), and a JWKS at
+  /.well-known/jwks.json holding the Ed25519 key that signs the agent card. All three are saved verbatim
+  and indexed below, so a WellKnown pointer is emitted. security.txt, openid-configuration,
+  oauth-authorization-server, oauth-protected-resource, api-catalog and ai-plugin.json all 404 with the
+  site's HTML 404 page, and so did the negative-control path, so those are true absences - no SecurityTxt
+  pointer. The agent card (/.well-known/agent-card.json, 200) is recorded and graded in
+  a2a/finn-tannlege-com-a2a.yml rather than counted here. There is no separate MCP host: the MCP endpoint
+  is /mcp on the apex, so the RFC 9728 probe was made on the apex (404) and under /mcp/ (404 JSON). Every
+  response from this host carries a Link header advertising agent-card, server-card, agent-skills,
+  api-catalog, openapi.yaml and sitemap documents on rettfrabonden.com - the sister vertical on the same
+  platform - which describe Rett fra Bonden, not this provider, and were not harvested; the
+  /.well-known/agent-skills/index.json and /openapi.yaml paths it names both 404 on finn-tannlege.com.
+hosts:
+- host: https://finn-tannlege.com
+  path_echo_control: passed
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/api-catalog.json, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/apis.json, status: 404}
+  - {path: /apis.json, status: 404}
+  - {path: /.well-known/mcp/server-card.json, status: 200, content_type: application/json, file: finn-tannlege-com-mcp-server-card.json, note: 'MCP server card, schemaVersion 2025-11, vendor Finn-tannlege, endpoint https://finn-tannlege.com/mcp, five tools listed, authentication schemes ["none"]'}
+  - {path: /.well-known/mcp.json, status: 200, content_type: application/json, file: finn-tannlege-com-mcp.json, note: byte-identical alias of the server card}
+  - {path: /.well-known/jwks.json, status: 200, content_type: application/json, file: finn-tannlege-com-jwks.json, note: 'one Ed25519 OKP key, kid lokal-a2a-2026, use sig, alg EdDSA - the key named in the agent card signature'}
+  - {path: /.well-known/agent-card.json, status: 200, content_type: application/json, note: 'recorded in a2a/finn-tannlege-com-a2a.yml; alias /agent-card.json also 200'}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /.well-known/agent-skills/index.json, status: 404}
+  - {path: /mcp/.well-known/oauth-protected-resource, status: 404, note: JSON 404 from the MCP router; no protected-resource metadata, consistent with an unauthenticated server}
+  - {path: /llms.txt, status: 200, note: saved verbatim to llms/finn-tannlege-com-llms.txt}
+  - {path: /security.txt, status: 404}
+  - {path: /.well-known/finn-tannlege-com-negative-control-7d3a91.json, status: 404, note: negative control}
+- host: https://www.finn-tannlege.com
+  redirects_to: https://finn-tannlege.com
+  documents:
+  - {path: /.well-known/agent-card.json, status: 301}
+  - {path: /, status: 301}

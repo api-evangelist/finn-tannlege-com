@@ -1,0 +1,153 @@
+{
+  "result": {
+    "tools": [
+      {
+        "name": "tannlege_search",
+        "title": "Search Norwegian dental clinics",
+        "description": "Search the finn-tannlege.com directory of Norwegian dental clinics. Supports free-text search, county (fylke) filter, specialty filter, Helfo direct-billing filter, and emergency-duty (akuttvakt) filter. Returns clinic name, address, contact info, Helfo status, and profile URL. Example: 'finn kjeveortoped i Bergen med Helfo-avtale'.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "query": {
+              "description": "Free-text search (name or city). Examples: 'Oslo tannklinikk', 'kjeveortoped Bergen'",
+              "type": "string"
+            },
+            "fylke": {
+              "description": "Norwegian county (fylke). Examples: 'Oslo', 'Vestland', 'Rogaland'",
+              "type": "string"
+            },
+            "spesialitet": {
+              "description": "Specialty slug. Examples: 'kjeveortopedi', 'endodonti', 'periodonti'",
+              "type": "string"
+            },
+            "helfo": {
+              "description": "If true, only return clinics with Helfo direct-billing agreement",
+              "type": "boolean"
+            },
+            "akutt": {
+              "description": "If true, only return clinics with emergency-duty (akuttvakt)",
+              "type": "boolean"
+            },
+            "limit": {
+              "default": 10,
+              "description": "Max results (default 10, max 25)",
+              "type": "number",
+              "minimum": 1,
+              "maximum": 25
+            }
+          }
+        },
+        "annotations": {
+          "title": "Search Norwegian dental clinics",
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": true
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "tannlege_info",
+        "title": "Get full details for a dental clinic",
+        "description": "Fetch complete profile for a single Norwegian dental clinic by organisation number (org_nr) or internal UUID. Returns name, address, phone, website, Helfo status, emergency duty, specialities, chain affiliation, specialists list, treatments, opening hours, payment options, and profile URL. Example: org_nr '912345678' or id 'uuid-here'.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "org_nr": {
+              "description": "9-digit Norwegian organisation number. Example: '912345678'",
+              "type": "string",
+              "pattern": "^\\d{9}$"
+            },
+            "id": {
+              "description": "Clinic UUID (alternative to org_nr)",
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        },
+        "annotations": {
+          "title": "Get dental clinic details",
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": true
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "tannlege_stats",
+        "title": "Norwegian dental market statistics",
+        "description": "Fetch aggregated statistics for the Norwegian dental market from finn-tannlege.com. Returns total clinic count, per-county breakdown (per fylke), Helfo count, chain-member count, emergency-duty (akuttvakt) count, and specialist-clinic count. Example question: 'how many dental clinics are there in Norway?'.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "annotations": {
+          "title": "Norwegian dental market statistics",
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "tannlege_akutt",
+        "title": "Find emergency-duty dental clinics in Norway",
+        "description": "Find Norwegian dental clinics that offer emergency-duty (akuttvakt) — i.e. treatment outside normal working hours. Optionally filter by county (fylke). Also returns advice about the municipal dental emergency service (kommunal tannlegevakt). Example: 'finn akutt tannlege i Oslo'.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "fylke": {
+              "description": "Limit to clinics in this county. Examples: 'Oslo', 'Vestland'",
+              "type": "string"
+            }
+          }
+        },
+        "annotations": {
+          "title": "Find emergency-duty dental clinics",
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": true
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "tannlege_kjeder",
+        "title": "List Norwegian dental chains",
+        "description": "List all Norwegian dental chains (kjeder) registered on finn-tannlege.com, including the number of clinic locations per chain. Examples of chains: 'Tannhelse Øst', 'Colosseum Tannlege', 'Nordic Dental'. Example question: 'hvilke tannlegekjeder finnes i Norge?'.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "annotations": {
+          "title": "List Norwegian dental chains",
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      }
+    ]
+  },
+  "jsonrpc": "2.0",
+  "id": 2
+}

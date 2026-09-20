@@ -1,18 +1,154 @@
 aid: finn-tannlege-com
 name: Finn-tannlege
-description: 'Finn-tannlege is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry)
-  and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  Finn-tannlege.com is an independent, free directory of Norwegian dental clinics (5,447 clinics on 2026-09-19)
+  assembled from public sources - the Brønnøysund Register Centre (Brreg), the Norwegian Health Personnel
+  Register (HPR), the Norwegian Dental Association (NTF) and the clinics' own websites - and searchable
+  by county (fylke), specialty, Helfo direct-billing agreement and emergency-duty (akuttvakt) availability.
+  It is built for people and AI agents alike: an open, key-free REST API under /api/tannlege described
+  by an OpenAPI 3.1 document, an A2A 1.0.0 agent card and JSON-RPC endpoint, a remote Streamable-HTTP
+  MCP server plus an npm stdio package (finn-tannlege-mcp), an llms.txt and a ChatGPT Custom GPT. Operated
+  by Daniel Fredriksen on the same Norwegian A2A agent platform as rettfrabonden.com and opplevagent.no;
+  every clinic field is stored with its source and last-confirmed date, and the "Verified" badge is an
+  editorially set status.
+image: https://finn-tannlege.com/favicon.svg
 url: https://raw.githubusercontent.com/api-evangelist/finn-tannlege-com/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:a2a-registry
-x-tier: stub
-x-tier-reason: harvest
+x-tier: profiled
+x-tier-reason: enrichment pass 2026-09-19 (local-v3; was a2a-registry harvest stub)
 specificationVersion: '0.20'
 created: '2026-09-19'
 modified: '2026-09-19'
 tags:
-- Company
-apis: []
+- Dental
+- Healthcare
+- Directory
+- Norway
+- Search
+- Open Data
+- A2A
+- MCP
+- AI Agents
+- Clinics
+apis:
+- aid: finn-tannlege-com:finn-tannlege-rest-api
+  name: Finn-tannlege REST API
+  description: >-
+    Read-only JSON API over the clinic directory: list and filter clinics (free text, county, specialty,
+    Helfo agreement, emergency duty, enrichment state, limit/offset), fetch one clinic by UUID, list the
+    registered specialists at a clinic, list dental chains, and an A2A-friendly discover endpoint that
+    returns a slim result shape. No authentication is required; an optional, free X-API-Key consumer identity
+    can be minted at POST /api/keys for usage-ledger purposes only. Responses are {count, agents[]} envelopes
+    of DentalClinic objects; the Brreg-sourced data is CC0. Published as an OpenAPI 3.1 document at https://finn-tannlege.com/openapi.json
+    (11 operations, one schema).
+  image: https://finn-tannlege.com/favicon.svg
+  humanURL: https://finn-tannlege.com/hvordan-det-fungerer
+  baseURL: https://finn-tannlege.com/api/tannlege
+  tags:
+  - Dental
+  - Clinics
+  - Directory
+  - Search
+  - Norway
+  properties:
+  - type: OpenAPI
+    url: openapi/finn-tannlege-com-openapi.yml
+  - type: OpenAPI
+    url: https://finn-tannlege.com/openapi.json
+  - type: Documentation
+    url: https://finn-tannlege.com/llms.txt
+  - type: Overlay
+    url: overlays/finn-tannlege-com-openapi-overlay.yaml
+  - type: Authentication
+    url: authentication/finn-tannlege-com-authentication.yml
+  - type: Conventions
+    url: conventions/finn-tannlege-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/finn-tannlege-com-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/finn-tannlege-com-rate-limits.yml
+  - type: Conformance
+    url: conformance/finn-tannlege-com-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/finn-tannlege-com-lifecycle.yml
+  - type: DataModel
+    url: data-model/finn-tannlege-com-data-model.yml
+  - type: AgentSkill
+    url: skills/_index.yml
+  - type: Plans
+    url: plans/finn-tannlege-com-plans-pricing.yml
+  overlays: []
+- aid: finn-tannlege-com:finn-tannlege-a2a-agent
+  name: Finn-tannlege A2A Agent
+  description: >-
+    The agent-to-agent surface: an anonymous A2A JSON-RPC 2.0 endpoint at https://finn-tannlege.com/a2a
+    implementing message/send, described by a signed (EdDSA JWS, JWKS at /.well-known/jwks.json) agent
+    card at /.well-known/agent-card.json that declares protocolVersion 1.0.0 and three skills - tannlege_search,
+    tannlege_info and tannlege_stats. A natural-language or JSON message is parsed into clinic filters
+    and answered with a completed task carrying a text summary artifact and a data artifact of matching
+    clinics. No streaming, push notifications or task queries.
+  image: https://finn-tannlege.com/favicon.svg
+  humanURL: https://finn-tannlege.com/hvordan-det-fungerer
+  baseURL: https://finn-tannlege.com/a2a
+  tags:
+  - A2A
+  - AI Agents
+  - JSON-RPC
+  - Dental
+  - Norway
+  properties:
+  - type: Documentation
+    url: https://finn-tannlege.com/llms.txt
+  - type: AgentCard
+    url: a2a/finn-tannlege-com-a2a.yml
+  - type: Authentication
+    url: authentication/finn-tannlege-com-authentication.yml
+  - type: Conventions
+    url: conventions/finn-tannlege-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/finn-tannlege-com-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/finn-tannlege-com-rate-limits.yml
+  - type: Conformance
+    url: conformance/finn-tannlege-com-conformance.yml
+  overlays: []
+- aid: finn-tannlege-com:finn-tannlege-mcp-server
+  name: Finn-tannlege MCP Server
+  description: >-
+    Model Context Protocol server in two shipped forms: a remote Streamable-HTTP endpoint at https://finn-tannlege.com/mcp
+    (session-based - initialize first, then send the Mcp-Session-Id header) and the npm stdio package
+    finn-tannlege-mcp (npx finn-tannlege-mcp) whose source lives in the mcp-server-dental folder of github.com/slookisen/lokal.
+    Five read-only, annotated tools: tannlege_search, tannlege_info, tannlege_stats, tannlege_akutt and
+    tannlege_kjeder. No authentication. A server card is served at /.well-known/mcp/server-card.json and
+    /.well-known/mcp.json.
+  image: https://finn-tannlege.com/favicon.svg
+  humanURL: https://github.com/slookisen/lokal/tree/main/mcp-server-dental
+  baseURL: https://finn-tannlege.com/mcp
+  tags:
+  - MCP
+  - AI Agents
+  - Dental
+  - Norway
+  - Tools
+  properties:
+  - type: Documentation
+    url: https://github.com/slookisen/lokal/tree/main/mcp-server-dental
+  - type: GitHubRepository
+    url: https://github.com/slookisen/lokal/tree/main/mcp-server-dental
+  - type: MCPServer
+    url: mcp/finn-tannlege-com-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/finn-tannlege-com-tool-crosswalk.yml
+  - type: Packages
+    url: packages/finn-tannlege-com-packages.yml
+  - type: Authentication
+    url: authentication/finn-tannlege-com-authentication.yml
+  - type: ErrorCatalog
+    url: errors/finn-tannlege-com-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/finn-tannlege-com-rate-limits.yml
+  overlays: []
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -21,3 +157,56 @@ maintainers:
 common:
 - type: Website
   url: https://finn-tannlege.com/
+- type: Documentation
+  url: https://finn-tannlege.com/llms.txt
+- type: GettingStarted
+  url: https://finn-tannlege.com/hvordan-det-fungerer
+- type: About
+  url: https://finn-tannlege.com/om
+- type: Support
+  url: https://finn-tannlege.com/kontakt
+- type: PrivacyPolicy
+  url: https://finn-tannlege.com/personvern
+- type: GitHubRepository
+  url: https://github.com/slookisen/lokal/tree/main/mcp-server-dental
+- type: DataSubjectRequest
+  url: https://finn-tannlege.com/personvern
+- type: AgenticAccess
+  url: agentic-access/finn-tannlege-com-agentic-access.yml
+- type: DomainSecurity
+  url: security/finn-tannlege-com-domain-security.yml
+- type: AgentCard
+  url: a2a/finn-tannlege-com-a2a.yml
+- type: MCPServer
+  url: mcp/finn-tannlege-com-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/finn-tannlege-com-tool-crosswalk.yml
+- type: LLMsTxt
+  url: llms/finn-tannlege-com-llms.txt
+- type: WellKnown
+  url: well-known/finn-tannlege-com-well-known.yml
+- type: Packages
+  url: packages/finn-tannlege-com-packages.yml
+- type: Authentication
+  url: authentication/finn-tannlege-com-authentication.yml
+- type: Conventions
+  url: conventions/finn-tannlege-com-conventions.yml
+- type: ErrorCatalog
+  url: errors/finn-tannlege-com-problem-types.yml
+- type: RateLimits
+  url: rate-limits/finn-tannlege-com-rate-limits.yml
+- type: Plans
+  url: plans/finn-tannlege-com-plans-pricing.yml
+- type: Conformance
+  url: conformance/finn-tannlege-com-conformance.yml
+- type: Lifecycle
+  url: lifecycle/finn-tannlege-com-lifecycle.yml
+- type: DataModel
+  url: data-model/finn-tannlege-com-data-model.yml
+- type: AgentSkill
+  url: skills/_index.yml
+x-enrichment:
+  date: '2026-09-19'
+  status: enriched
+  artifacts_added: 29
+  pass: local-v3

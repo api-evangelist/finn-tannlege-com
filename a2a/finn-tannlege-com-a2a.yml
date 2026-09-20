@@ -1,0 +1,123 @@
+generated: '2026-09-19'
+method: probed
+source: https://finn-tannlege.com/.well-known/agent-card.json
+card:
+  file: finn-tannlege-com-agent-card.json
+discovery:
+  path: /.well-known/agent-card.json
+  canonical: true
+  host: finn-tannlege.com
+  also_served_at:
+  - {url: 'https://finn-tannlege.com/agent-card.json', status: 200, note: alias the provider's llms.txt advertises; byte-identical to the well-known copy}
+  - {url: 'https://finn-tannlege.com/a2a', status: 200, note: 'GET on the JSON-RPC endpoint returns the same card (the OpenAPI calls this operation getDentalA2ACard, "health check")'}
+  - {url: 'https://finn-tannlege.com/.well-known/agent.json', status: 404, note: the pre-0.3 legacy path is not served}
+  - {url: 'https://www.finn-tannlege.com/.well-known/agent-card.json', status: 301, note: www redirects to the apex}
+  note: >-
+    Served on the apex with content-type application/json, cache-control public max-age=300 and a weak
+    ETag. provider.organization is "Finn-tannlege" and provider.url is https://finn-tannlege.com, the
+    OpenAPI on the same host titles itself "Finn-tannlege.com API", and the a2aregistry.org listing that
+    surfaced this operator names the same wellKnownURI - ownership is not in question. The response
+    carries a Link header advertising agent-card, MCP server-card, agent-skills, api-catalog and openapi
+    documents on rettfrabonden.com; that is a platform-wide header naming the sister vertical (the two
+    sites share a codebase and operator) and those documents describe Rett fra Bonden, not this provider,
+    so nothing was harvested from it.
+x-evidence:
+  fetched: '2026-09-19'
+  url: https://finn-tannlege.com/.well-known/agent-card.json
+  http_status: 200
+  content_type: application/json; charset=utf-8
+  body_parses_as: JSON object with AgentCard shape (name, url, version, protocolVersion, capabilities, skills, provider, preferredTransport, defaultInputModes, defaultOutputModes all present)
+  endpoint_probe:
+    url: https://finn-tannlege.com/a2a
+    method: POST message/send
+    status: 200
+    note: >-
+      An anonymous message/send with a text part "kjeveortoped Trondheim" returned HTTP 200 and a completed
+      task: status.state "completed", two artifacts (a bilingual text summary and a data part
+      {count, clinics[]}) and metadata naming the dispatched skill (tannlege_search), the parsed filter and
+      the source text. tasks/get returned JSON-RPC -32601 "Method not found: tasks/get" over HTTP 200, so
+      message/send is the only method implemented, as the provider's llms.txt states.
+  signature:
+    present: true
+    alg: EdDSA
+    kid: lokal-a2a-2026
+    jwks: https://finn-tannlege.com/.well-known/jwks.json
+    jwks_status: 200
+    note: >-
+      The card carries one JWS signature (protected header {"alg":"EdDSA","kid":"lokal-a2a-2026"}) and the
+      matching Ed25519 OKP public key is published at /.well-known/jwks.json with use "sig". Presence and
+      key availability were checked; the signature itself was not cryptographically verified in this pass.
+agent_card:
+  name: Finn-tannlege
+  url: https://finn-tannlege.com/a2a
+  version: 0.1.0
+  protocol_version: 1.0.0
+  preferred_transport: JSONRPC
+  additional_interfaces:
+  - {url: 'https://finn-tannlege.com/api/tannlege', transport: HTTP+JSON}
+  provider:
+    organization: Finn-tannlege
+    url: https://finn-tannlege.com
+  documentation_url: null
+  security: >-
+    anonymous - authentication.schemes ["none"]; securitySchemes declares an OPTIONAL consumerApiKey
+    (apiKey in header X-API-Key, minted free at POST /api/keys) but no security requirement references it
+  capabilities:
+    streaming: false
+    push_notifications: false
+    state_transition_history: false
+  default_input_modes: [text/plain, application/json]
+  default_output_modes: [application/json]
+  skill_count: 3
+  skills:
+  - id: tannlege_search
+    name: Søk tannlegeklinikker / Search dental clinics
+    parameters: q, fylke, spesialitet, helfo, akutt
+  - id: tannlege_info
+    name: Hent klinikkdetaljer / Get clinic details
+    parameters: org_nr (9-digit Norwegian organisation number)
+  - id: tannlege_stats
+    name: Aggregert statistikk / Aggregated statistics
+    parameters: none
+  extra_members:
+    endpoints: {rest: 'https://finn-tannlege.com/api/tannlege', a2a: 'https://finn-tannlege.com/a2a', mcp: 'https://finn-tannlege.com/mcp', openapi: 'https://finn-tannlege.com/openapi.json', llms: 'https://finn-tannlege.com/llms.txt', provenancePage: 'https://finn-tannlege.com/proveniens'}
+    x-distribution: 'one channel: a live ChatGPT Custom GPT ("Finn tannlege i Norge") whose Actions read finn-tannlege.com/openapi.json'
+grade_basis: >-
+  Graded against the A2A 1.0.0 hard checks: capabilities is an OBJECT (pass), protocolVersion is present
+  (pass, "1.0.0"), skills is an ARRAY of three (pass). The optional fields that separate near-conformant
+  from conformant - preferredTransport, defaultInputModes, defaultOutputModes - are all declared.
+deviations:
+- field: additionalInterfaces
+  observed: '[{url, transport: "HTTP+JSON"}]'
+  note: >-
+    The card declares protocolVersion 1.0.0 but lists its interfaces with the 0.3-era
+    additionalInterfaces[].transport shape; A2A 1.0 uses supportedInterfaces[].protocolBinding. A 1.0
+    client reading url + preferredTransport still works; a strict 1.0 validator will not see the REST
+    interface.
+- field: authentication
+  observed: '{schemes: ["none"], credentials: null}'
+  note: >-
+    A pre-0.3 member kept alongside securitySchemes. There is no top-level security[] array, so the declared
+    consumerApiKey scheme is never required - consistent with the provider's statement that the key is
+    voluntary - but the card expresses "anonymous" through a legacy field rather than an empty security list.
+- field: message/send response
+  observed: '{taskId, status: {state, timestamp}, artifacts[], metadata}'
+  note: >-
+    The result is task-shaped but uses taskId rather than the 1.0 Task's id, and carries no kind or
+    contextId. Artifacts follow the spec shape (artifactId, name, parts[] with kind text|data).
+- field: skills vs MCP tools
+  observed: 3 skills in the card, 5 tools on the MCP server
+  note: >-
+    tannlege_akutt and tannlege_kjeder exist only on the MCP surface; the A2A card advertises the three
+    skills the message/send parser dispatches to.
+- field: endpoints, x-distribution, signatures
+  observed: present
+  note: >-
+    endpoints and x-distribution are non-standard members (harmless to a client). signatures[] IS a 1.0
+    member and is populated with an EdDSA JWS whose key is published at /.well-known/jwks.json - rare in the
+    catalog and worth noting as a positive.
+conformance:
+  spec: A2A 1.0.0
+  grade: conformant
+  protocol_version: 1.0.0
+  preferred_transport: JSONRPC

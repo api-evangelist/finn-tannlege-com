@@ -1,0 +1,91 @@
+generated: '2026-09-19'
+method: probed
+source: >-
+  openapi/finn-tannlege-com-openapi.yml (fetched from https://finn-tannlege.com/openapi.json),
+  https://finn-tannlege.com/.well-known/agent-card.json, live JSON-RPC probes of
+  https://finn-tannlege.com/a2a and https://finn-tannlege.com/mcp, the /.well-known/ sweep in
+  well-known/finn-tannlege-com-well-known.yml and response headers observed on 2026-09-19.
+description: >-
+  Cross-cutting standards the finn-tannlege.com surfaces conform to, each with the evidence that decided
+  it. No compliance program or certification is published, so no Compliance pointer is emitted. The
+  provider is a business directory, not a clinical system, so no healthcare interoperability standard
+  (FHIR, HL7) applies to its data and none is claimed - recorded as not applicable, not as a failure.
+standards:
+- id: openapi-3.1
+  conforms: true
+  evidence: >-
+    https://finn-tannlege.com/openapi.json parses as OpenAPI 3.1.0 with 11 operations, every one carrying
+    a unique operationId and a summary, one reusable schema (DentalClinic) and a CC0 license object;
+    info.title "Finn-tannlege.com API", servers[] https://finn-tannlege.com. No tags, no securitySchemes,
+    no examples, no 5xx responses.
+- id: a2a
+  conforms: true
+  version: 1.0.0 (declared)
+  evidence: >-
+    Agent card at the canonical RFC 8615 path with protocolVersion 1.0.0, capabilities object, skills
+    array of three, preferredTransport JSONRPC, default input/output modes and a JWS signature; message/send
+    returned a completed task with artifacts. Graded conformant in a2a/finn-tannlege-com-a2a.yml with
+    deviations (0.3-shaped additionalInterfaces, legacy authentication member, taskId instead of id).
+- id: mcp
+  conforms: true
+  version: 2025-06-18 (negotiated live); server card advertises 2025-11-25
+  evidence: >-
+    POST https://finn-tannlege.com/mcp completed initialize -> notifications/initialized -> tools/list over
+    Streamable HTTP with an Mcp-Session-Id header and SSE-framed responses; five tools with inputSchema and
+    the readOnlyHint/destructiveHint/idempotentHint/openWorldHint annotations. A server card is published at
+    /.well-known/mcp/server-card.json.
+- id: json-rpc-2.0
+  conforms: true
+  evidence: >-
+    Every A2A and MCP response carries jsonrpc "2.0", echoes the request id and uses the reserved error
+    codes (-32601 for unknown methods, -32001 for a missing MCP session).
+- id: rfc8615-well-known
+  conforms: true
+  evidence: Agent card, MCP server card (two paths) and JWKS served under /.well-known/ (well-known/finn-tannlege-com-well-known.yml).
+- id: jws-jwks
+  conforms: true
+  evidence: >-
+    The agent card's signatures[] carries an EdDSA JWS (RFC 7515/8037) with kid lokal-a2a-2026, and
+    /.well-known/jwks.json publishes the matching Ed25519 OKP key as an RFC 7517 JWK Set. Presence checked;
+    signature not cryptographically verified in this pass.
+- id: ietf-ratelimit-headers
+  conforms: true
+  evidence: >-
+    RateLimit-Policy "1000;w=900", RateLimit-Limit, RateLimit-Remaining and RateLimit-Reset on every REST,
+    A2A and MCP response, the draft-ietf-httpapi-ratelimit-headers shape (rate-limits/finn-tannlege-com-rate-limits.yml).
+- id: llms-txt
+  conforms: true
+  evidence: https://finn-tannlege.com/llms.txt (200, text/plain) in llms.txt markdown form; saved to llms/finn-tannlege-com-llms.txt.
+- id: pagination
+  conforms: true
+  style: offset
+  evidence: listDentalAgents and discoverDentalAgents take limit (default 50, max 500) and offset; responses carry count. No cursor, no next link.
+- id: hsts
+  conforms: true
+  evidence: 'strict-transport-security: max-age=31536000; includeSubDomains on every response; http:// and www redirect 301 to https://finn-tannlege.com.'
+- id: oauth2
+  conforms: false
+  evidence: >-
+    No OAuth anywhere: the OpenAPI has no securitySchemes, the agent card requires none,
+    /.well-known/oauth-authorization-server and /.well-known/oauth-protected-resource 404 on the apex and
+    under /mcp/. The only credential is an optional X-API-Key consumer identity minted at POST /api/keys.
+- id: oidc
+  conforms: false
+  evidence: /.well-known/openid-configuration returns 404.
+- id: rfc9457
+  conforms: false
+  evidence: 'REST errors are {"error":"Not found"} application/json, not application/problem+json; no type/title/status members.'
+- id: security-txt
+  conforms: false
+  evidence: /.well-known/security.txt and /security.txt both 404.
+- id: idempotency
+  conforms: null
+  applicable: false
+  evidence: The published contract is read-only (every operation is GET except the A2A/MCP JSON-RPC posts, which are queries); there is no mutating operation to protect, so idempotency keys are not applicable.
+- id: fhir
+  conforms: null
+  applicable: false
+  evidence: >-
+    A clinic-directory API over Brreg/HPR business data with a bespoke DentalClinic schema; no FHIR
+    resources or capability statement are served or claimed. Not a clinical data exchange, so no domain
+    healthcare standard is expected (reward-only signal, not asserted).

@@ -1,0 +1,75 @@
+generated: '2026-09-19'
+method: searched
+probe: true
+source: https://finn-tannlege.com/personvern
+sources:
+- https://finn-tannlege.com/personvern
+- https://finn-tannlege.com/proveniens
+- https://finn-tannlege.com/om
+- https://finn-tannlege.com/llms.txt
+signals:
+  data_subject_request:
+    url: https://finn-tannlege.com/personvern
+    api: https://finn-tannlege.com/api/keys/erase
+    channel: e-mail to kontakt@finn-tannlege.com (named on the privacy page as the controller contact)
+    rights_listed: [innsyn (access), retting (rectification), sletting (erasure)]
+    legal_basis_stated: GDPR art. 6(1)(f) legitimate interest, over publicly available business data only
+    last_updated: '2026-06-04'
+    note: >-
+      The privacy page ("Personvernerklæring", last updated 2026-06-04) names finn-tannlege.com as
+      controller, lists the GDPR chapter III rights and gives the contact address for exercising them; the
+      About page separately commits to answering clinic profile update/removal requests within five
+      business days. The api: entry is narrower than a general DSR endpoint: llms.txt documents POST
+      /api/keys/erase as "GDPR-sletting" of the label and contact e-mail attached to a consumer API key,
+      callable by the key holder without login. Recorded because it is a real, documented self-service
+      erasure route; it does not cover clinic-profile data.
+note: >-
+  One horizontal signal is published. The site carries no accessibility statement (the Norwegian
+  uustatus.no register was not searched by name; the site's own /accessibility and /tilgjengelighetserklaering
+  404), no subprocessor list, DPA, data-residency statement, incident-notification SLA, transparency report,
+  SBOM, support period or AI-transparency page. The /proveniens page is a substantive data-provenance
+  statement (per-field source and confirmation date, editorial "Verified" status) and the About page
+  discloses that AI agents fetch and verify the data; that is provenance transparency about the dataset,
+  not a disclosure about an AI system's use toward users, so it is noted here and not recorded as
+  ai_transparency. An honest single-signal map is the measurement.
+probed_absent:
+- signal: accessibility_conformance
+  urls:
+  - {url: 'https://finn-tannlege.com/accessibility', status: 404}
+  - {url: 'https://finn-tannlege.com/accessibility/vpat', status: 404}
+  - {url: 'https://finn-tannlege.com/tilgjengelighetserklaering', status: 404}
+- signal: subprocessors
+  urls:
+  - {url: 'https://finn-tannlege.com/legal/subprocessors', status: 404}
+- signal: incident_notification
+  urls:
+  - {url: 'https://finn-tannlege.com/legal/dpa', status: 404}
+- signal: data_residency
+  urls:
+  - {url: 'https://finn-tannlege.com/docs/data-residency', status: 404}
+  note: Hosted on Fly.io (server header); no residency statement is published and an inferred region is not a commitment.
+- signal: transparency_report
+  urls:
+  - {url: 'https://finn-tannlege.com/transparency', status: 404}
+- signal: sbom
+  urls:
+  - {url: 'https://finn-tannlege.com/security/sbom', status: 404}
+  note: Search only, never derived. The MCP server source is public (MIT) but no bill of materials is published.
+- signal: ai_transparency
+  urls:
+  - {url: 'https://finn-tannlege.com/ai/transparency', status: 404}
+  note: See note above on /om and /proveniens.
+- signal: notice_and_action
+  urls:
+  - {url: 'https://finn-tannlege.com/legal/report-content', status: 404}
+  note: The contact form (/kontakt, 200) invites reports of errors in a clinic profile; a general contact form is not a notice-and-action mechanism.
+- signal: global_privacy_control
+  note: No published statement about Sec-GPC; not tested by header, per rule.
+- signal: support_lifetime
+  note: No versioning or support-period page (lifecycle/finn-tannlege-com-lifecycle.yml).
+- signal: age_assurance
+  note: Nothing published; no user accounts exist.
+- signal: exit_assistance
+  note: Not applicable to a free, account-less service; nothing published.
+- signal: training_data_summary
+  note: Nothing published.

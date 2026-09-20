@@ -1,0 +1,85 @@
+generated: '2026-09-19'
+method: derived
+source:
+- openapi/finn-tannlege-com-openapi.yml
+- https://finn-tannlege.com/api/tannlege/agents/00000000-0000-0000-0000-000000000000
+- https://finn-tannlege.com/a2a
+- https://finn-tannlege.com/mcp
+format: json
+format_note: >-
+  Not RFC 9457. REST routes return a flat {"error": "<message>"} JSON object with a conventional HTTP
+  status; the OpenAPI declares a 404 on getDentalAgent and a 400 on dentalMcpSse and nothing else - no
+  error schema, no 5xx. The A2A endpoint returns JSON-RPC 2.0 error objects over HTTP 200; the MCP
+  endpoint returns JSON-RPC errors over HTTP 200 inside a session and over HTTP 404 when the session is
+  missing. There is no published error reference; entries marked observed were seen live on 2026-09-19.
+envelopes:
+- surface: rest
+  shape: '{error: "<message>"}'
+  transport_status: 404
+  note: One string field; no code, no type URI, no request id.
+- surface: rest-unknown-route
+  shape: Express default HTML ("Cannot GET /path"), text/html
+  transport_status: 404
+  note: Paths outside the registered API routes (for example /api/tannlege/stats) fall through to the site's 404 handling rather than the JSON envelope.
+- surface: a2a
+  shape: '{jsonrpc: "2.0", id, error: {code, message}}'
+  transport_status: 200
+- surface: mcp
+  shape: '{jsonrpc: "2.0", id, error: {code, message}}'
+  transport_status: 200 (in session) | 404 (no session)
+problems:
+- id: not-found
+  surface: rest
+  http_status: 404
+  message: Not found
+  observed: true
+  operations: [getDentalAgent]
+  remediation: >-
+    The clinic UUID does not exist. Resolve ids through listDentalAgents or discoverDentalAgents first; a
+    9-digit org_nr is not a valid path id for this operation (use the MCP tannlege_info tool, which accepts
+    org_nr, or filter the list).
+- id: invalid-limit-ignored
+  surface: rest
+  http_status: 200
+  observed: true
+  operations: [listDentalAgents]
+  note: >-
+    A non-numeric limit (limit=abc) is silently replaced by the default of 50 rather than rejected with
+    400. Clients should not rely on validation errors for query parameters.
+- id: sse-bad-request
+  surface: mcp
+  http_status: 400
+  observed: false
+  operations: [dentalMcpSse]
+  note: Declared in the spec for GET /mcp; live GET /mcp without a session returned 404 -32001 instead.
+- id: jsonrpc-method-not-found
+  surface: a2a
+  jsonrpc_code: -32601
+  http_status: 200
+  message: 'Method not found: tasks/get'
+  observed: true
+  triggers: [tasks/get and any method other than message/send]
+  remediation: Use message/send; task state is returned inline as a completed task and cannot be queried afterwards.
+- id: mcp-session-not-found
+  surface: mcp
+  jsonrpc_code: -32001
+  http_status: 404
+  message: Session not found
+  observed: true
+  remediation: Send initialize first, read the Mcp-Session-Id response header, and echo it on every subsequent request.
+- id: mcp-method-not-found
+  surface: mcp
+  jsonrpc_code: -32601
+  http_status: 200
+  message: Method not found
+  observed: true
+  triggers: [resources/list, prompts/list]
+  remediation: The server exposes tools only.
+- id: rate-limited
+  surface: all
+  http_status: null
+  observed: false
+  note: >-
+    Undocumented and not observed. Read RateLimit-Remaining and RateLimit-Reset on every response
+    (rate-limits/finn-tannlege-com-rate-limits.yml) and back off before the shared per-IP counter reaches
+    zero.

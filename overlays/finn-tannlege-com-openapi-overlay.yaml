@@ -1,0 +1,59 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist overlay for the Finn-tannlege.com API
+  version: 1.0.0
+  description: >-
+    Non-destructive enhancements to openapi/finn-tannlege-com-openapi.yml (fetched from
+    https://finn-tannlege.com/openapi.json on 2026-09-19). The provider's spec declares no tags and no
+    server-level metadata about the agent surfaces; this overlay groups the eleven operations into four
+    tags, links each agent-surface operation to the API Evangelist artifact that describes it, and records
+    the rate-limit contract observed on the live API. It never changes paths, parameters, schemas or
+    responses. generated: 2026-09-19, method: generated.
+extends: finn-tannlege-com-openapi.yml
+actions:
+- target: $
+  update:
+    tags:
+    - name: Clinics
+      description: Search, list and read Norwegian dental clinics and their registered specialists.
+    - name: Chains
+      description: Dental chains (kjeder) and their clinic locations.
+    - name: Discovery
+      description: Slim, agent-friendly discovery over the same clinic filters.
+    - name: Agent Surfaces
+      description: The A2A card and endpoint, the MCP endpoint and llms.txt, documented as operations.
+    x-apievangelist:
+      provider: finn-tannlege-com
+      rate_limit: 1000 requests per 900 s per IP, signalled with RateLimit-Policy/Limit/Remaining/Reset on every response
+      authentication: none required; optional X-API-Key consumer identity (POST /api/keys) for usage-ledger attribution only
+      artifacts:
+        conventions: ../conventions/finn-tannlege-com-conventions.yml
+        errors: ../errors/finn-tannlege-com-problem-types.yml
+        rate_limits: ../rate-limits/finn-tannlege-com-rate-limits.yml
+        agent_card: ../a2a/finn-tannlege-com-a2a.yml
+        mcp: ../mcp/finn-tannlege-com-mcp.yml
+        tool_crosswalk: ../mcp/finn-tannlege-com-tool-crosswalk.yml
+- target: $.paths['/api/tannlege/agents'].get
+  update: {tags: [Clinics]}
+- target: $.paths['/api/tannlege/agents/{id}'].get
+  update: {tags: [Clinics]}
+- target: $.paths['/api/tannlege/agents/{id}/specialists'].get
+  update: {tags: [Clinics]}
+- target: $.paths['/api/tannlege/chains'].get
+  update: {tags: [Chains]}
+- target: $.paths['/api/tannlege/discover'].get
+  update: {tags: [Discovery]}
+- target: $.paths['/a2a'].get
+  update: {tags: [Agent Surfaces], x-apievangelist-artifact: ../a2a/finn-tannlege-com-a2a.yml}
+- target: $.paths['/a2a'].post
+  update: {tags: [Agent Surfaces], x-apievangelist-artifact: ../a2a/finn-tannlege-com-a2a.yml, x-apievangelist-note: 'Only message/send is implemented; other JSON-RPC methods return -32601 over HTTP 200.'}
+- target: $.paths['/.well-known/agent-card.json'].get
+  update: {tags: [Agent Surfaces], x-apievangelist-artifact: ../a2a/finn-tannlege-com-a2a.yml}
+- target: $.paths['/llms.txt'].get
+  update: {tags: [Agent Surfaces], x-apievangelist-artifact: ../llms/finn-tannlege-com-llms.txt}
+- target: $.paths['/mcp'].post
+  update: {tags: [Agent Surfaces], x-apievangelist-artifact: ../mcp/finn-tannlege-com-mcp.yml, x-apievangelist-note: 'Session required: initialize first and echo the Mcp-Session-Id header, or the server answers HTTP 404 with JSON-RPC -32001 "Session not found".'}
+- target: $.paths['/mcp'].get
+  update: {tags: [Agent Surfaces], x-apievangelist-artifact: ../mcp/finn-tannlege-com-mcp.yml}
+- target: $.paths['/api/tannlege/agents'].get.parameters[?(@.name=='limit')]
+  update: {x-apievangelist-note: 'A non-numeric value is silently replaced by the default of 50 (observed 2026-09-19), not rejected.'}

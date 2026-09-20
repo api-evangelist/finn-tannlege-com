@@ -1,0 +1,133 @@
+generated: '2026-09-19'
+method: probed
+source: >-
+  https://finn-tannlege.com/mcp (initialize + notifications/initialized + tools/list, all HTTP 200/202 on
+  2026-09-19), https://finn-tannlege.com/.well-known/mcp/server-card.json (HTTP 200),
+  https://finn-tannlege.com/llms.txt, https://registry.npmjs.org/finn-tannlege-mcp and the published
+  server source at https://github.com/slookisen/lokal/tree/main/mcp-server-dental.
+name: finn-tannlege
+title: Finn-tannlege — Norwegian dental clinic search
+description: >-
+  Search and compare Norwegian dental clinics (5,447 on 2026-09-19) by free text, county (fylke),
+  specialty, Helfo direct-billing agreement and emergency-duty (akuttvakt) availability, fetch a single
+  clinic profile by organisation number or UUID, list dental chains and read market statistics. Every
+  tool is read-only and annotated as such.
+status: published
+deployment:
+  mode: both
+  endpoint: https://finn-tannlege.com/mcp
+  install: npx finn-tannlege-mcp
+  package: https://www.npmjs.com/package/finn-tannlege-mcp
+  auth: none
+  verified: probed
+  note: >-
+    Two shipped forms of one server. The REMOTE Streamable-HTTP endpoint answered a full anonymous
+    handshake: initialize returned serverInfo {name finn-tannlege, version 0.1.0}, protocolVersion
+    2025-06-18 and an Mcp-Session-Id header; tools/list with that header returned five tools with
+    inputSchema and annotations. The LOCAL-STDIO package finn-tannlege-mcp (npm 0.1.0, published
+    2026-06-04, MIT, bin finn-tannlege-mcp, depends on @modelcontextprotocol/sdk ^1.12.1) is the same tool
+    set proxied to the REST API, with FINN_TANNLEGE_URL as its only environment variable. The provider's
+    README recommends the URL for ChatGPT and remote clients and npx for Claude Desktop/Cursor.
+  checked: '2026-09-19'
+transport: streamable-http
+session:
+  required: true
+  header: Mcp-Session-Id
+  note: >-
+    A tools/list POST without a session returns HTTP 404 with JSON-RPC error -32001 "Session not found";
+    GET /mcp without a session returns the same. Clients must initialize first and echo the session id.
+    The server card says the same in plain words ("Handshake transport only: send an initialize request
+    first") and states the server does not yet support the 2026-07-28 era (per-request _meta,
+    server/discover).
+protocol:
+  negotiated: '2025-06-18'
+  server_card_latest: '2025-11-25'
+  server_card_supported: ['2025-11-25', '2025-06-18', '2025-03-26', '2024-11-05', '2024-10-07']
+capabilities:
+  tools: true
+  tools_list_changed: true
+  resources: false
+  prompts: false
+  note: >-
+    Live initialize advertised only tools (listChanged true). resources/list and prompts/list each returned
+    JSON-RPC -32601 "Method not found". The server card lists resources and prompts capability objects
+    (listChanged false, subscribe false), which overstates the live server.
+authentication:
+  scheme: none
+  note: >-
+    No credential was sent for any call. The server card states "All MCP tools are read-only and require
+    no authentication." The optional X-API-Key consumer identity documented in llms.txt may be sent on MCP
+    calls for usage-ledger attribution; it grants nothing and raises no limit.
+discovery:
+  server_card: https://finn-tannlege.com/.well-known/mcp/server-card.json
+  server_card_alias: https://finn-tannlege.com/.well-known/mcp.json
+  server_card_file: ../well-known/finn-tannlege-com-mcp-server-card.json
+  mcp_registry_name: io.github.slookisen/finn-tannlege-mcp
+  mcp_registry:
+    url: https://registry.modelcontextprotocol.io/v0/servers?search=finn-tannlege
+    status: active
+    published: '2026-07-30'
+    version: 0.1.0
+    remotes: [{type: streamable-http, url: 'https://finn-tannlege.com/mcp'}]
+    packages: [{registryType: npm, identifier: finn-tannlege-mcp, version: 0.1.0, transport: stdio}]
+    note: Official MCP registry entry (io.modelcontextprotocol.registry/official status active, isLatest true) naming both the remote endpoint and the npm package - the provider registered both forms itself.
+  oauth_protected_resource: {url: 'https://finn-tannlege.com/.well-known/oauth-protected-resource', status: 404, note: 'no RFC 9728 metadata, consistent with an unauthenticated server; the MCP endpoint shares the apex host so there is no separate MCP host to probe'}
+probe:
+  url: https://finn-tannlege.com/mcp
+  steps:
+  - {method: initialize, http_status: 200, content_type: text/event-stream, note: 'returned protocolVersion 2025-06-18, capabilities.tools.listChanged true, serverInfo finn-tannlege 0.1.0, Mcp-Session-Id header'}
+  - {method: notifications/initialized, http_status: 202}
+  - {method: tools/list, http_status: 200, content_type: text/event-stream, tools_returned: 5}
+  - {method: resources/list, http_status: 200, jsonrpc_error: -32601}
+  - {method: prompts/list, http_status: 200, jsonrpc_error: -32601}
+  - {method: 'tools/list (no session)', http_status: 404, jsonrpc_error: -32001, message: Session not found}
+  rate_limit_headers: 'RateLimit-Policy 1000;w=900, RateLimit-Limit, RateLimit-Remaining, RateLimit-Reset present on every response'
+  checked: '2026-09-19'
+tools_file: finn-tannlege-com-mcp-tools.json
+tools:
+  count: 5
+  all_read_only: true
+  list:
+  - name: tannlege_search
+    title: Search Norwegian dental clinics
+    description: Search the directory by free text, county (fylke), specialty, Helfo agreement and emergency-duty filters.
+    inputs: [query, fylke, spesialitet, helfo, akutt, limit]
+    annotations: {readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true}
+    source_operation: openapi/finn-tannlege-com-openapi.yml#listDentalAgents
+  - name: tannlege_info
+    title: Get dental clinic details
+    description: Full profile for one clinic by 9-digit organisation number (org_nr) or UUID.
+    inputs: [org_nr, id]
+    annotations: {readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true}
+    source_operation: openapi/finn-tannlege-com-openapi.yml#getDentalAgent
+  - name: tannlege_stats
+    title: Norwegian dental market statistics
+    description: Total clinic count, per-county breakdown and Helfo, chain and emergency-duty counts.
+    inputs: []
+    annotations: {readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false}
+    source_operation: null
+  - name: tannlege_akutt
+    title: Find emergency-duty dental clinics
+    description: Clinics offering treatment outside normal hours, optionally filtered by county.
+    inputs: [fylke]
+    annotations: {readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true}
+    source_operation: openapi/finn-tannlege-com-openapi.yml#listDentalAgents
+  - name: tannlege_kjeder
+    title: List Norwegian dental chains
+    description: All dental chains registered on finn-tannlege.com with a clinic-location count per chain.
+    inputs: []
+    annotations: {readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false}
+    source_operation: openapi/finn-tannlege-com-openapi.yml#listDentalChains
+distribution:
+- channel: remote-mcp
+  url: https://finn-tannlege.com/mcp
+- channel: npm
+  package: finn-tannlege-mcp
+  version: 0.1.0
+  published: '2026-06-04'
+  install: npx finn-tannlege-mcp
+  claude_desktop_config: '{"mcpServers":{"finn-tannlege":{"command":"npx","args":["finn-tannlege-mcp"]}}}'
+- channel: custom-gpt
+  url: https://chatgpt.com/g/g-6a21e79241cc8191a04642bda508e42b-finn-tannlege-i-norge
+  note: ChatGPT Custom GPT using Actions on the OpenAPI, not MCP; listed because the agent card's x-distribution names it.
+crosswalk: finn-tannlege-com-tool-crosswalk.yml
