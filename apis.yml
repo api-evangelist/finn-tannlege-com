@@ -11,6 +11,22 @@ description: >-
   by Daniel Fredriksen on the same Norwegian A2A agent platform as rettfrabonden.com and opplevagent.no;
   every clinic field is stored with its source and last-confirmed date, and the "Verified" badge is an
   editorially set status.
+deliveryModel:
+  model: saas
+  license_evidence:
+    not_product:
+    - slookisen/lokal
+  open_source: unknown
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: low
+  source:
+  - openapi
+  - pricing
+  - repository-not-product
+  generated: '2026-09-25'
+  method: derived
 image: https://finn-tannlege.com/favicon.svg
 url: https://raw.githubusercontent.com/api-evangelist/finn-tannlege-com/refs/heads/main/apis.yml
 x-type: company
@@ -32,53 +48,6 @@ tags:
 - AI Agents
 - Clinics
 apis:
-- aid: finn-tannlege-com:finn-tannlege-rest-api
-  name: Finn-tannlege REST API
-  description: >-
-    Read-only JSON API over the clinic directory: list and filter clinics (free text, county, specialty,
-    Helfo agreement, emergency duty, enrichment state, limit/offset), fetch one clinic by UUID, list the
-    registered specialists at a clinic, list dental chains, and an A2A-friendly discover endpoint that
-    returns a slim result shape. No authentication is required; an optional, free X-API-Key consumer identity
-    can be minted at POST /api/keys for usage-ledger purposes only. Responses are {count, agents[]} envelopes
-    of DentalClinic objects; the Brreg-sourced data is CC0. Published as an OpenAPI 3.1 document at https://finn-tannlege.com/openapi.json
-    (11 operations, one schema).
-  image: https://finn-tannlege.com/favicon.svg
-  humanURL: https://finn-tannlege.com/hvordan-det-fungerer
-  baseURL: https://finn-tannlege.com/api/tannlege
-  tags:
-  - Dental
-  - Clinics
-  - Directory
-  - Search
-  - Norway
-  properties:
-  - type: OpenAPI
-    url: openapi/finn-tannlege-com-openapi.yml
-  - type: OpenAPI
-    url: https://finn-tannlege.com/openapi.json
-  - type: Documentation
-    url: https://finn-tannlege.com/llms.txt
-  - type: Overlay
-    url: overlays/finn-tannlege-com-openapi-overlay.yaml
-  - type: Authentication
-    url: authentication/finn-tannlege-com-authentication.yml
-  - type: Conventions
-    url: conventions/finn-tannlege-com-conventions.yml
-  - type: ErrorCatalog
-    url: errors/finn-tannlege-com-problem-types.yml
-  - type: RateLimits
-    url: rate-limits/finn-tannlege-com-rate-limits.yml
-  - type: Conformance
-    url: conformance/finn-tannlege-com-conformance.yml
-  - type: Lifecycle
-    url: lifecycle/finn-tannlege-com-lifecycle.yml
-  - type: DataModel
-    url: data-model/finn-tannlege-com-data-model.yml
-  - type: AgentSkill
-    url: skills/_index.yml
-  - type: Plans
-    url: plans/finn-tannlege-com-plans-pricing.yml
-  overlays: []
 - aid: finn-tannlege-com:finn-tannlege-a2a-agent
   name: Finn-tannlege A2A Agent
   description: >-
@@ -149,12 +118,154 @@ apis:
   - type: RateLimits
     url: rate-limits/finn-tannlege-com-rate-limits.yml
   overlays: []
+- aid: finn-tannlege-com:finn-tannlege-com-a2a-api
+  name: Finn-tannlege A2a API
+  description: The A2a API from Finn-tannlege — 1 operation(s) for a2a.
+  humanURL: https://finn-tannlege.com/hvordan-det-fungerer
+  baseURL: https://finn-tannlege.com/api/tannlege
+  tags:
+  - A2a
+  properties:
+  - type: OpenAPI
+    url: openapi/finn-tannlege-com-a2a-api-openapi.yml
+  - type: Documentation
+    url: https://finn-tannlege.com/llms.txt
+  - type: Authentication
+    url: authentication/finn-tannlege-com-authentication.yml
+  - type: Conventions
+    url: conventions/finn-tannlege-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/finn-tannlege-com-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/finn-tannlege-com-rate-limits.yml
+  - type: Conformance
+    url: conformance/finn-tannlege-com-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/finn-tannlege-com-lifecycle.yml
+  - type: DataModel
+    url: data-model/finn-tannlege-com-data-model.yml
+  - type: Plans
+    url: plans/finn-tannlege-com-plans-pricing.yml
+- aid: finn-tannlege-com:finn-tannlege-com-llms-txt-api
+  name: Finn-tannlege Llms.txt API
+  description: The Llms.txt API from Finn-tannlege — 1 operation(s) for llms.txt.
+  humanURL: https://finn-tannlege.com/hvordan-det-fungerer
+  baseURL: https://finn-tannlege.com/api/tannlege
+  tags:
+  - Llms.txt
+  properties:
+  - type: OpenAPI
+    url: openapi/finn-tannlege-com-llms-txt-api-openapi.yml
+  - type: Documentation
+    url: https://finn-tannlege.com/llms.txt
+  - type: Authentication
+    url: authentication/finn-tannlege-com-authentication.yml
+  - type: Conventions
+    url: conventions/finn-tannlege-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/finn-tannlege-com-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/finn-tannlege-com-rate-limits.yml
+  - type: Conformance
+    url: conformance/finn-tannlege-com-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/finn-tannlege-com-lifecycle.yml
+  - type: DataModel
+    url: data-model/finn-tannlege-com-data-model.yml
+  - type: Plans
+    url: plans/finn-tannlege-com-plans-pricing.yml
+- aid: finn-tannlege-com:finn-tannlege-com-mcp-api
+  name: Finn-tannlege MCP API
+  description: The Mcp API from Finn-tannlege — 1 operation(s) for mcp.
+  humanURL: https://finn-tannlege.com/hvordan-det-fungerer
+  baseURL: https://finn-tannlege.com/api/tannlege
+  tags:
+  - Mcp
+  properties:
+  - type: OpenAPI
+    url: openapi/finn-tannlege-com-mcp-api-openapi.yml
+  - type: Documentation
+    url: https://finn-tannlege.com/llms.txt
+  - type: Authentication
+    url: authentication/finn-tannlege-com-authentication.yml
+  - type: Conventions
+    url: conventions/finn-tannlege-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/finn-tannlege-com-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/finn-tannlege-com-rate-limits.yml
+  - type: Conformance
+    url: conformance/finn-tannlege-com-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/finn-tannlege-com-lifecycle.yml
+  - type: DataModel
+    url: data-model/finn-tannlege-com-data-model.yml
+  - type: Plans
+    url: plans/finn-tannlege-com-plans-pricing.yml
+- aid: finn-tannlege-com:finn-tannlege-com-tannlege-api
+  name: Finn-tannlege Tannlege API
+  description: The Tannlege API from Finn-tannlege — 5 operation(s) for tannlege.
+  humanURL: https://finn-tannlege.com/hvordan-det-fungerer
+  baseURL: https://finn-tannlege.com/api/tannlege
+  tags:
+  - Tannlege
+  properties:
+  - type: OpenAPI
+    url: openapi/finn-tannlege-com-tannlege-api-openapi.yml
+  - type: Documentation
+    url: https://finn-tannlege.com/llms.txt
+  - type: Authentication
+    url: authentication/finn-tannlege-com-authentication.yml
+  - type: Conventions
+    url: conventions/finn-tannlege-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/finn-tannlege-com-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/finn-tannlege-com-rate-limits.yml
+  - type: Conformance
+    url: conformance/finn-tannlege-com-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/finn-tannlege-com-lifecycle.yml
+  - type: DataModel
+    url: data-model/finn-tannlege-com-data-model.yml
+  - type: Plans
+    url: plans/finn-tannlege-com-plans-pricing.yml
+- aid: finn-tannlege-com:finn-tannlege-com-well-known-api
+  name: Finn-tannlege .well Known API
+  description: The .well Known API from Finn-tannlege — 1 operation(s) for .well known.
+  humanURL: https://finn-tannlege.com/hvordan-det-fungerer
+  baseURL: https://finn-tannlege.com/api/tannlege
+  tags:
+  - .well Known
+  properties:
+  - type: OpenAPI
+    url: openapi/finn-tannlege-com-well-known-api-openapi.yml
+  - type: Documentation
+    url: https://finn-tannlege.com/llms.txt
+  - type: Authentication
+    url: authentication/finn-tannlege-com-authentication.yml
+  - type: Conventions
+    url: conventions/finn-tannlege-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/finn-tannlege-com-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/finn-tannlege-com-rate-limits.yml
+  - type: Conformance
+    url: conformance/finn-tannlege-com-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/finn-tannlege-com-lifecycle.yml
+  - type: DataModel
+    url: data-model/finn-tannlege-com-data-model.yml
+  - type: Plans
+    url: plans/finn-tannlege-com-plans-pricing.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Overlay
+  url: overlays/finn-tannlege-com-openapi-overlay.yaml
 - type: Website
   url: https://finn-tannlege.com/
 - type: Documentation
@@ -210,3 +321,10 @@ x-enrichment:
   status: enriched
   artifacts_added: 29
   pass: local-v3
+x-a2a:
+  verified: true
+  probed: '2026-09-26'
+  url: "https://finn-tannlege.com/.well-known/agent-card.json"
+  grade: "conformant"
+  protocol_version: "1.0.0"
+  control: 404
