@@ -1,8 +1,7 @@
 {
   "provider": "finn-tannlege-com",
   "sources": [
-    "_original/finn-tannlege-com-openapi.json",
-    "finn-tannlege-com-openapi.yml"
+    "_original/finn-tannlege-com-openapi.json"
   ],
   "outputs": [
     "finn-tannlege-com-well-known-api-openapi.yml",
@@ -11,12 +10,11 @@
     "finn-tannlege-com-mcp-api-openapi.yml",
     "finn-tannlege-com-tannlege-api-openapi.yml"
   ],
-  "archived": [
-    "archived openapi/finn-tannlege-com-openapi.yml"
-  ],
+  "archived": [],
   "errors": [],
   "warnings": [],
   "notes": [
+    "1 archived document(s) dropped as subsets of other archived documents",
     "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
     "finn-tannlege-com-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
     "finn-tannlege-com-openapi.json: tagged paths GET /api/tannlege/agents -> Tannlege",
@@ -35,29 +33,14 @@
     "finn-tannlege-com-openapi.json: declared missing tag: Llms.txt",
     "finn-tannlege-com-openapi.json: declared missing tag: Mcp",
     "finn-tannlege-com-openapi.json: declared missing tag: Tannlege",
-    "finn-tannlege-com-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
-    "finn-tannlege-com-openapi.yml: tagged paths GET /api/tannlege/agents -> Tannlege",
-    "finn-tannlege-com-openapi.yml: tagged paths GET /api/tannlege/agents/{id} -> Tannlege",
-    "finn-tannlege-com-openapi.yml: tagged paths GET /api/tannlege/agents/{id}/specialists -> Tannlege",
-    "finn-tannlege-com-openapi.yml: tagged paths GET /api/tannlege/chains -> Tannlege",
-    "finn-tannlege-com-openapi.yml: tagged paths GET /api/tannlege/discover -> Tannlege",
-    "finn-tannlege-com-openapi.yml: tagged paths GET /a2a -> A2a",
-    "finn-tannlege-com-openapi.yml: tagged paths POST /a2a -> A2a",
-    "finn-tannlege-com-openapi.yml: tagged paths GET /.well-known/agent-card.json -> .well Known",
-    "finn-tannlege-com-openapi.yml: tagged paths GET /llms.txt -> Llms.txt",
-    "finn-tannlege-com-openapi.yml: tagged paths POST /mcp -> Mcp",
-    "finn-tannlege-com-openapi.yml: tagged paths GET /mcp -> Mcp",
-    "finn-tannlege-com-openapi.yml: declared missing tag: .well Known",
-    "finn-tannlege-com-openapi.yml: declared missing tag: A2a",
-    "finn-tannlege-com-openapi.yml: declared missing tag: Llms.txt",
-    "finn-tannlege-com-openapi.yml: declared missing tag: Mcp",
-    "finn-tannlege-com-openapi.yml: declared missing tag: Tannlege",
-    "tag '.well Known' spans 2 source specs (finn-tannlege-com-openapi.json, finn-tannlege-com-openapi.yml): per-path servers applied",
-    "tag 'A2a' spans 2 source specs (finn-tannlege-com-openapi.json, finn-tannlege-com-openapi.yml): per-path servers applied",
-    "tag 'Llms.txt' spans 2 source specs (finn-tannlege-com-openapi.json, finn-tannlege-com-openapi.yml): per-path servers applied",
-    "tag 'Mcp' spans 2 source specs (finn-tannlege-com-openapi.json, finn-tannlege-com-openapi.yml): per-path servers applied",
-    "tag 'Tannlege' spans 2 source specs (finn-tannlege-com-openapi.json, finn-tannlege-com-openapi.yml): per-path servers applied",
-    "apis.yml register: written (+5 apis, 7 total)"
+    "apis.yml register: already-registered"
   ],
-  "skipped": []
+  "skipped": [
+    "_original/finn-tannlege-com-openapi.yml: archived document superseded by a larger archived document",
+    "finn-tannlege-com-a2a-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "finn-tannlege-com-llms-txt-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "finn-tannlege-com-mcp-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "finn-tannlege-com-tannlege-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "finn-tannlege-com-well-known-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
