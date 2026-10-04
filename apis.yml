@@ -124,6 +124,8 @@ apis:
   humanURL: https://finn-tannlege.com/hvordan-det-fungerer
   baseURL: https://finn-tannlege.com/api/tannlege
   tags:
+  - A2A
+  tags_raw:
   - A2a
   properties:
   - type: OpenAPI
@@ -152,6 +154,8 @@ apis:
   humanURL: https://finn-tannlege.com/hvordan-det-fungerer
   baseURL: https://finn-tannlege.com/api/tannlege
   tags:
+  - llms-txt
+  tags_raw:
   - Llms.txt
   properties:
   - type: OpenAPI
@@ -180,6 +184,8 @@ apis:
   humanURL: https://finn-tannlege.com/hvordan-det-fungerer
   baseURL: https://finn-tannlege.com/api/tannlege
   tags:
+  - MCP
+  tags_raw:
   - Mcp
   properties:
   - type: OpenAPI
