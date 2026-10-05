@@ -1,0 +1,12 @@
+{
+ "url": "https://finn-tannlege.com/openapi.json",
+ "requested_url": "https://finn-tannlege.com/openapi.json",
+ "status": 200,
+ "content_type": "application/json; charset=utf-8",
+ "bytes": 7676,
+ "sha256": "bd2db30a66048136154fb1f3bd69a0a56ba3793aaea13352d33ba34220abde5e",
+ "fetched_at": "2026-10-04",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "byte-identical",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the archived file is byte-identical to what the provider serves."
+}
