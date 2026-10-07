@@ -270,6 +270,8 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Pricing
+  url: https://finn-tannlege.com/hvordan-det-fungerer
 - type: Overlay
   url: overlays/finn-tannlege-com-openapi-overlay.yaml
 - type: Website
