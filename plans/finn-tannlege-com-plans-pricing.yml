@@ -28,3 +28,17 @@ plans:
     page_size: limit default 50, max 500
   optional_identity: 'free X-API-Key via POST /api/keys (label and contact_email optional) for a usage ledger; revocable at POST /api/keys/revoke, erasable at POST /api/keys/erase'
   data_license: Brreg-sourced data CC0; HPR data public; clinic-website data reproduced as factual summary
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - metered
+  units: []
+  plans:
+  - name: Open access
+    access: other
+    model: metered
+    model_how: derived
+    units: []
+    periods:
+    - none
