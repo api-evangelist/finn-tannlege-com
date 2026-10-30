@@ -64,5 +64,127 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Finn-tannlege is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry) and added to the network as a stub for full-pipeline profiling.
-- https://finn-tannlege.com/
+Finn-tannlege.com is an independent, free directory of Norwegian dental clinics (5,447 clinics on 2026-09-19) assembled from public sources - the Brønnøysund Register Centre (Brreg), the Norwegian Health Personnel Register (HPR), the Norwegian Dental Association (NTF) and the clinics' own websites - and searchable by county (fylke), specialty, Helfo direct-billing agreement and emergency-duty (akuttvakt) availability. It is built for people and AI agents alike: an open, key-free REST API under /api/tannlege described by an OpenAPI 3.1 document, an A2A 1.0.0 agent card and JSON-RPC endpoint, a remote Streamable-HTTP MCP server plus an npm stdio package (finn-tannlege-mcp), an llms.txt and a ChatGPT Custom GPT. Operated by Daniel Fredriksen on the same Norwegian A2A agent platform as rettfrabonden.com and opplevagent.no; every clinic field is stored with its source and last-confirmed date, and the "Verified" badge is an editorially set status.
+
+**Areas:** Dental · Healthcare · Directory · Norway · Search · Open Data · A2A · MCP · AI Agents · Clinics
+
+## Finn-tannlege on APIs.io
+
+Everything profiled for Finn-tannlege is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/finn-tannlege-com/](https://apis.io/providers/finn-tannlege-com/)** — or go straight to one of the APIs or properties below.
+
+### APIs (7)
+
+- [Finn-tannlege A2A Agent](https://apis.io/apis/finn-tannlege-com/finn-tannlege-a2a-agent/) — The agent-to-agent surface: an anonymous A2A JSON-RPC 2.0 endpoint at https://finn-tannlege.com/a2a implementing message/send, described by a signed (EdDSA…
+- [Finn-tannlege MCP Server](https://apis.io/apis/finn-tannlege-com/finn-tannlege-mcp-server/) — Model Context Protocol server in two shipped forms: a remote Streamable-HTTP endpoint at https://finn-tannlege.com/mcp (session-based - initialize first,…
+- [Finn-tannlege A2a API](https://apis.io/apis/finn-tannlege-com/finn-tannlege-com-a2a-api/) — The A2a API from Finn-tannlege — 1 operation(s) for a2a.
+- [Finn-tannlege Llms.txt API](https://apis.io/apis/finn-tannlege-com/finn-tannlege-com-llms-txt-api/) — The Llms.txt API from Finn-tannlege — 1 operation(s) for llms.txt.
+- [Finn-tannlege MCP API](https://apis.io/apis/finn-tannlege-com/finn-tannlege-com-mcp-api/) — The Mcp API from Finn-tannlege — 1 operation(s) for mcp.
+- [Finn-tannlege Tannlege API](https://apis.io/apis/finn-tannlege-com/finn-tannlege-com-tannlege-api/) — The Tannlege API from Finn-tannlege — 5 operation(s) for tannlege.
+- [Finn-tannlege .well Known API](https://apis.io/apis/finn-tannlege-com/finn-tannlege-com-well-known-api/) — The .well Known API from Finn-tannlege — 1 operation(s) for .well known.
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [finn-tannlege](https://apis.io/servers/finn-tannlege-com/finn-tannlege/)
+
+#### Agentic access (1)
+
+Which operations an agent can call, which act, and which need a human in the loop.
+
+- [Finn Tannlege Com Agentic Access](https://apis.io/agentic-access/finn-tannlege-com/finn-tannlege-com-agentic-access/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Finn Tannlege Com Openapi Overlay](https://apis.io/overlays/finn-tannlege-com/finn-tannlege-com-openapi-overlay/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Finn Tannlege Com Authentication](https://apis.io/security/finn-tannlege-com/finn-tannlege-com-authentication/)
+- [Finn Tannlege Com Domain Security](https://apis.io/security/finn-tannlege-com/finn-tannlege-com-domain-security/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Finn Tannlege Com Plans Pricing](https://apis.io/plans/finn-tannlege-com/finn-tannlege-com-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Finn Tannlege Com Rate Limits](https://apis.io/rate-limits/finn-tannlege-com/finn-tannlege-com-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://finn-tannlege.com/)
+- [Documentation](https://finn-tannlege.com/llms.txt)
+- [Getting started](https://finn-tannlege.com/hvordan-det-fungerer)
+- [Pricing](https://finn-tannlege.com/hvordan-det-fungerer)
+- [Support](https://finn-tannlege.com/kontakt)
+- [Privacy policy](https://finn-tannlege.com/personvern)
+
+## API Evangelist rating
+
+**Kin Score 40.6** — developing · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 75.0 |
+| Contract quality | 42.6 |
+| Contract governance | 18.2 |
+| Operational transparency | 26.3 |
+| Developer ergonomics | 39.9 |
+| Access clarity | 42.1 |
+
+**Agent readiness 35.1** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | documented (partial credit) |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | derived (partial credit) |
+| OpenAPI Examples | partial |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | conformant |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | partial |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 19.5** — Health
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/finn-tannlege-com/](https://apis.io/providers/finn-tannlege-com/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Finn-tannlege: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/finn-tannlege-com/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
